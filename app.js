@@ -3,7 +3,6 @@ const app = express();
 const morgan = require('morgan');
 
 const rotaProdutos = require('./routes/produtos')
-const rotaPedidos = require('./routes/pedidos')
 
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: false }))
@@ -26,7 +25,6 @@ app.use((req, res, next) => {
 })
 
 app.use('/produtos', rotaProdutos);
-app.use('/pedidos', rotaPedidos);
 
 // Quando não acha rota
 app.use((req, res, next) => {

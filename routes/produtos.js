@@ -47,30 +47,40 @@ router.post('/', (req, res, next) => {
 // RETORNA UM PRODUTO EXPECIFICO
 router.get('/:id_produto', (req, res, next) => {
     const id = req.params.id_produto;
-    if (id == 'exc  lusivo') {
-        res.status(200).send({
-            mensagem: 'Listando produto expecifico',
-            id: id
-        })
-    } else {
-        res.status(200).send({
-            mensagem: 'Produto expecifico não encontrado',
-            id: id
-        })
+
+    const query = {
+        text: `SELECT * FROM public.produtos WHERE id_produto = ${id}`
     }
+
+    client.query(query, (err, result) => {
+        if (err) {
+            return res.status(500).send({
+                error: err
+            });
+        }
+        res.status(200).send({
+            produto: result.rows
+        })
+    })
 })
 
-// ALTERA UM PRODUTO
-router.patch('/', (req, res, next) => {
-    res.status(201).send({
-        mensagem: 'Alterando dados do produto'
-    })
-});
-
 // DELETA UM PRODUTO
-router.delete('/', (req, res, next) => {
-    res.status(201).send({
-        mensagem: 'Deletando um produto'
+router.delete('/:id_produto', (req, res, next) => {
+    const id = req.params.id_produto;
+
+    const query = {
+        text: `DELETE FROM public.produtos WHERE id_produto = ${id}`
+    }
+
+    client.query(query, (err, result) => {
+        if (err) {
+            return res.status(500).send({
+                error: err
+            });
+        }
+        res.status(201).send({
+            mensagem: 'Deletado com sucesso'
+        })
     })
 });
 
