@@ -1,25 +1,46 @@
 const express = require('express');
 const router = express.Router();
+const client = require('../postgres').client;
 
 
 // RETORNA TODOS OS PRODUTOS
 router.get('/', (req, res, next) => {
-    res.status(200).send({
-        mensagem: 'Listagem de produtos'
+
+    const query = {
+        text: "SELECT * FROM public.produtos"
+    }
+
+    client.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).send({
+                error: err
+            });
+        }
+        res.status(200).send({
+            mensagem: 'Listagem de produtos',
+            produtos: results.rows
+            
+        })
     })
 });
 
 // INSERE UM PRODUTO
 router.post('/', (req, res, next) => {
 
-    const produto = {
-        nome: req.body.nome,
-        preco: req.body.preco
+    const query = {
+        text: "INSERT INTO public.produtos (nome, preco) VALUES ($1, $2)",
+        values: [req.body.nome, req.body.preco]
     }
 
-    res.status(201).send({
-        mensagem: 'Produto adicionado',
-        produtoCriado: produto
+    client.query(query, (err) => {
+        if (err) {
+            return res.status(500).send({
+                error: err
+            })
+        }
+        res.status(201).send({
+            mensagem: 'Produto Adicionado com sucesso'
+        })
     })
 });
 
